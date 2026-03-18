@@ -1,0 +1,1683 @@
+<!doctype html>
+<html lang="ru" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚛️ физиКАЯ - 2026</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html, body, #app { height: 100%; }
+    body { 
+      font-family: 'Outfit', sans-serif; 
+      background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 50%, #faf5ff 100%);
+      overflow: hidden;
+    }
+    #app { display: flex; flex-direction: column; }
+    main { flex: 1; overflow-y: auto; }
+    
+    .animate-fade-in { animation: fadeIn 0.6s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .animate-slide-left { animation: slideLeft 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    @keyframes slideLeft { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+    
+    .nav-active { border-b-4 solid #7c3aed; color: #7c3aed; font-weight: 700; }
+    .btn-hover { transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .btn-hover:hover { transform: translateY(-4px); box-shadow: 0 15px 35px rgba(124, 58, 237, 0.25); }
+    
+    .card { 
+      background: rgba(255,255,255,0.75); 
+      backdrop-filter: blur(12px); 
+      border-radius: 16px; 
+      border: 1.5px solid rgba(255,255,255,0.9);
+      transition: all 0.4s ease;
+    }
+    .card:hover { background: rgba(255,255,255,0.9); transform: translateY(-2px); box-shadow: 0 20px 40px rgba(124, 58, 237, 0.15); }
+    
+    .formula-box { 
+      background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%); 
+      border-left: 5px solid #3b82f6; 
+      padding: 14px 18px; 
+      border-radius: 10px; 
+      margin: 10px 0;
+      font-family: 'Courier New', monospace; 
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+    
+    .definition-box { 
+      background: linear-gradient(135deg, #fef3c7 0%, #fef9e7 100%); 
+      border-left: 5px solid #f59e0b; 
+      padding: 14px 18px; 
+      border-radius: 10px; 
+      margin: 10px 0;
+      border-top: 2px dashed #f59e0b;
+    }
+    
+    .example-box { 
+      background: linear-gradient(135deg, #d1fae5 0%, #ecfdf5 100%); 
+      border-left: 5px solid #10b981; 
+      padding: 14px 18px; 
+      border-radius: 10px; 
+      margin: 10px 0;
+      border-top: 2px dashed #10b981;
+    }
+    
+    .warning-box {
+      background: linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%);
+      border-left: 5px solid #ef4444;
+      padding: 14px 18px;
+      border-radius: 10px;
+      margin: 10px 0;
+    }
+    
+    .scheme-svg { 
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); 
+      border-radius: 12px; 
+      padding: 18px;
+      margin: 12px 0;
+      border: 2px solid rgba(148, 163, 184, 0.3);
+    }
+    
+    .interactive-task {
+      background: linear-gradient(135deg, #c7d2fe 0%, #e9d5ff 100%);
+      border: 2px solid #7c3aed;
+      border-radius: 12px;
+      padding: 16px;
+      margin: 12px 0;
+    }
+    
+    .test-option { 
+      cursor: pointer; 
+      padding: 12px 16px; 
+      border: 2px solid #e5e7eb; 
+      border-radius: 10px; 
+      transition: all 0.3s ease; 
+      margin: 8px 0;
+      background: rgba(255,255,255,0.6);
+    }
+    .test-option:hover { border-color: #7c3aed; background: rgba(124, 58, 237, 0.08); transform: translateX(4px); }
+    .test-option.correct { border-color: #10b981; background: rgba(16, 185, 129, 0.12); }
+    .test-option.wrong { border-color: #ef4444; background: rgba(239, 68, 68, 0.12); }
+    
+    .page { display: none; }
+    .page.active { display: block; animation: fadeIn 0.5s; }
+    
+    .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 50; overflow-y: auto; }
+    .modal.active { display: flex; align-items: center; justify-content: center; }
+    .modal-content { background: white; border-radius: 20px; width: 90%; max-width: 700px; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 60px rgba(0,0,0,0.3); }
+    
+    .section-tab { 
+      cursor: pointer; 
+      padding: 10px 18px; 
+      border-radius: 10px; 
+      font-weight: 600; 
+      transition: all 0.3s ease; 
+      background: rgba(255,255,255,0.5);
+      border: 2px solid transparent;
+    }
+    .section-tab.active { 
+      background: linear-gradient(135deg, #7c3aed, #a855f7); 
+      color: white;
+      border-color: #fff;
+      box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);
+    }
+    
+    .stat-item {
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 10px;
+      text-align: center;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    
+    .gradient-text {
+      background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #d946ef 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 800;
+    }
+    
+    .shimmer { animation: shimmer 2s infinite; }
+    @keyframes shimmer {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 1; }
+    }
+    
+    @media (max-width: 768px) {
+      .modal-content { width: 95%; margin: 20px auto; }
+      h1 { font-size: 1.5rem; }
+      h2 { font-size: 1.3rem; }
+      h3 { font-size: 1.1rem; }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="app"><!-- Header with Navigation -->
+  <header class="sticky top-0 z-40 bg-gradient-to-r from-purple-700 via-violet-600 to-fuchsia-600 text-white shadow-2xl">
+    <div class="px-4 py-4 md:py-5">
+      <div class="flex items-center justify-between gap-4 max-w-7xl mx-auto"><button onclick="goToPage('home')" class="flex items-center gap-2 hover:scale-105 transition cursor-pointer group"> <span class="text-3xl md:text-4xl group-hover:animate-bounce">⚛️</span>
+        <div>
+          <div class="font-bold text-base md:text-lg leading-none">
+            физиКАЯ
+          </div>
+          <div class="text-xs md:text-sm font-light text-purple-100">
+            2026
+          </div>
+        </div></button> <button id="menu-toggle" onclick="toggleMenu()" class="md:hidden p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg></button>
+        <nav id="nav-desktop" class="hidden md:flex gap-1 lg:gap-4 items-center"><button onclick="goToPage('home')" class="nav-btn px-4 py-2 hover:bg-white hover:bg-opacity-10 rounded-lg transition font-semibold text-sm lg:text-base">🏠</button> <button onclick="goToPage('sections')" class="nav-btn px-4 py-2 hover:bg-white hover:bg-opacity-10 rounded-lg transition font-semibold text-sm lg:text-base">📚 Разделы</button> <button onclick="goToPage('tasks')" class="nav-btn px-4 py-2 hover:bg-white hover:bg-opacity-10 rounded-lg transition font-semibold text-sm lg:text-base">🎯 Тесты</button> <button onclick="goToPage('interactive')" class="nav-btn px-4 py-2 hover:bg-white hover:bg-opacity-10 rounded-lg transition font-semibold text-sm lg:text-base">🎮 Задания</button> <button onclick="goToPage('connections')" class="nav-btn px-4 py-2 hover:bg-white hover:bg-opacity-10 rounded-lg transition font-semibold text-sm lg:text-base">🌍 Связи</button> <button onclick="goToPage('authors')" class="nav-btn px-4 py-2 hover:bg-white hover:bg-opacity-10 rounded-lg transition font-semibold text-sm lg:text-base">👩‍🎓 Авторы</button> <button onclick="showLoginModal()" class="nav-btn px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg transition font-bold text-sm lg:text-base border-2 border-white">👨‍🏫</button>
+        </nav>
+      </div><!-- Mobile Menu -->
+      <nav id="nav-mobile" class="hidden mt-4 pb-4 space-y-2 md:hidden border-t border-white border-opacity-20 pt-4"><button onclick="goToPage('home'); toggleMenu()" class="block w-full text-left px-4 py-2 hover:bg-white hover:bg-opacity-10 rounded-lg transition">🏠 Главная</button> <button onclick="goToPage('sections'); toggleMenu()" class="block w-full text-left px-4 py-2 hover:bg-white hover:bg-opacity-10 rounded-lg transition">📚 Разделы</button> <button onclick="goToPage('tasks'); toggleMenu()" class="block w-full text-left px-4 py-2 hover:bg-white hover:bg-opacity-10 rounded-lg transition">🎯 Тесты</button> <button onclick="goToPage('interactive'); toggleMenu()" class="block w-full text-left px-4 py-2 hover:bg-white hover:bg-opacity-10 rounded-lg transition">🎮 Интерактив</button> <button onclick="goToPage('connections'); toggleMenu()" class="block w-full text-left px-4 py-2 hover:bg-white hover:bg-opacity-10 rounded-lg transition">🌍 Связи</button> <button onclick="goToPage('authors'); toggleMenu()" class="block w-full text-left px-4 py-2 hover:bg-white hover:bg-opacity-10 rounded-lg transition">👩‍🎓 Авторы</button> <button onclick="showLoginModal(); toggleMenu()" class="block w-full text-left px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg transition font-bold">👨‍🏫 Учителям</button>
+      </nav>
+    </div>
+  </header><!-- Main Content -->
+  <main class="flex-1 overflow-y-auto"><!-- Home Page -->
+    <div id="page-home" class="page active animate-fade-in">
+      <!-- Краткое описание страницы -->
+      <div class="bg-purple-100 border-l-8 border-purple-700 p-4 mb-2 mx-4 mt-4 rounded-r-lg">
+        <p class="text-sm font-semibold text-purple-900">🏠 <span class="underline">Главная страница:</span> портал «физиКАЯ» — здесь вы найдёте навигацию по всем разделам, статистику и карточки для быстрого старта.</p>
+      </div>
+      <section class="px-4 py-6 md:py-10">
+        <div class="max-w-7xl mx-auto">
+          <!-- Hero Section unchanged -->
+          <div class="text-center mb-12 animate-slide-left">
+            <div class="inline-block mb-4"><span class="text-6xl md:text-7xl animate-bounce">⚛️</span>
+            </div>
+            <h1 class="text-3xl md:text-5xl font-bold mb-4"><span class="gradient-text">Механика 2026</span></h1>
+            <p class="text-gray-700 text-sm md:text-lg mb-8 max-w-2xl mx-auto">Исследуйте удивительный мир движения через интерактивные уроки, реальные примеры и захватывающие опыты</p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center"><button onclick="goToPage('sections')" class="btn-hover px-8 py-3 bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-xl font-bold text-sm md:text-base shadow-lg">📚 Начать обучение</button> <button onclick="goToPage('interactive')" class="btn-hover px-8 py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-xl font-bold text-sm md:text-base shadow-lg">🎮 Интерактив</button>
+            </div>
+          </div>
+
+          <!-- ⭐ НОВЫЙ БЛОК: Описание разделов сайта (что есть и что делать) -->
+          <div class="card p-6 md:p-8 mb-12 bg-white/90">
+            <h2 class="text-2xl md:text-3xl font-bold text-purple-800 mb-6 flex items-center gap-2"><span class="text-3xl">🧭</span> Навигация по порталу «физиКАЯ»</h2>
+            <p class="text-gray-700 mb-8 text-base leading-relaxed">Добро пожаловать! Наш сайт разделён на пять основных разделов. Каждый создан для того, чтобы сделать изучение физики максимально понятным и увлекательным. Вот краткое описание того, что вас ждёт:</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+              <div class="border-l-4 border-purple-400 pl-4 py-2 bg-purple-50/60 rounded-r-xl">
+                <h3 class="font-bold text-lg text-purple-800 flex items-center gap-1"><span class="text-2xl">📚</span> Разделы (теория)</h3>
+                <p class="text-sm text-gray-700 mt-1">Здесь вы найдёте структурированные уроки по кинематике, динамике, статике и законам сохранения. <strong class="font-semibold">Что делать:</strong> выбирайте вкладку с нужным разделом, листайте уроки кнопками «Назад/Далее». Внутри — определения, формулы и примеры.</p>
+              </div>
+
+              <div class="border-l-4 border-pink-400 pl-4 py-2 bg-pink-50/60 rounded-r-xl">
+                <h3 class="font-bold text-lg text-pink-800 flex items-center gap-1"><span class="text-2xl">🎯</span> Тесты</h3>
+                <p class="text-sm text-gray-700 mt-1">Быстрая проверка знаний. <strong class="font-semibold">Что делать:</strong> выберите тему (например, «Кинематика») — откроется модальное окно с 8–10 вопросами. Отмечайте ответы — сайт сразу покажет, верно или нет. Идеально для самопроверки перед контрольной.</p>
+              </div>
+
+              <div class="border-l-4 border-indigo-400 pl-4 py-2 bg-indigo-50/60 rounded-r-xl">
+                <h3 class="font-bold text-lg text-indigo-800 flex items-center gap-1"><span class="text-2xl">🎮</span> Интерактивные задания</h3>
+                <p class="text-sm text-gray-700 mt-1">Практические мини-калькуляторы: скорость, ускорение, сила, энергия, момент и свободное падение. <strong class="font-semibold">Что делать:</strong> вводите числа в поля, нажимайте «Рассчитать» — получаете ответ. Отлично для тренировки формул.</p>
+              </div>
+
+              <div class="border-l-4 border-teal-400 pl-4 py-2 bg-teal-50/60 rounded-r-xl">
+                <h3 class="font-bold text-lg text-teal-800 flex items-center gap-1"><span class="text-2xl">🌍</span> Межпредметные связи</h3>
+                <p class="text-sm text-gray-700 mt-1">Узнайте, как физика связана с математикой, химией, спортом, биологией и техникой. <strong class="font-semibold">Что делать:</strong> читайте карточки с примерами — это расширяет кругозор и помогает увидеть физику вокруг.</p>
+              </div>
+
+              <div class="border-l-4 border-amber-400 pl-4 py-2 bg-amber-50/60 rounded-r-xl">
+                <h3 class="font-bold text-lg text-amber-800 flex items-center gap-1"><span class="text-2xl">👨‍🏫</span> Кабинет учителя</h3>
+                <p class="text-sm text-gray-700 mt-1">Доступен после входа (кнопка в шапке). Здесь собраны КТП, планы уроков, самостоятельные работы. <strong class="font-semibold">Что делать:</strong> используйте вкладки «КТП», «План-конспекты», «Самостоятельные» для скачивания материалов.</p>
+              </div>
+
+              <div class="border-l-4 border-gray-400 pl-4 py-2 bg-gray-50/60 rounded-r-xl">
+                <h3 class="font-bold text-lg text-gray-800 flex items-center gap-1"><span class="text-2xl">📊</span> Статистика внизу</h3>
+                <p class="text-sm text-gray-700 mt-1">Футер показывает общее количество визитов, учеников, решённых задач и тестов. <strong class="font-semibold">Что делать:</strong> просто наблюдайте за активностью портала в реальном времени.</p>
+              </div>
+
+            </div>
+            <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200 text-sm text-gray-700">
+              <span class="font-bold text-blue-700">💡 Совет:</span> Начните с <button onclick="goToPage('sections')" class="text-purple-700 underline font-semibold hover:text-purple-900">📚 Разделов</button>, затем закрепите знания в <button onclick="goToPage('tasks')" class="text-purple-700 underline font-semibold hover:text-purple-900">🎯 Тестах</button>. Для быстрых расчётов используйте <button onclick="goToPage('interactive')" class="text-purple-700 underline font-semibold hover:text-purple-900">🎮 Интерактивные задания</button>.
+            </div>
+          </div>
+
+          <!-- Section Cards (unchanged) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-10">
+            <div onclick="goToPage('sections'); selectSection('kinematics')" class="card btn-hover p-6 md:p-8 text-center cursor-pointer bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+              <div class="text-6xl mb-4">🚗</div>
+              <h3 class="font-bold text-purple-800 mb-2 text-lg">Кинематика</h3>
+              <p class="text-sm text-gray-700">Движение и его описание</p>
+              <div class="mt-4 text-xs font-bold text-blue-600 bg-blue-200 rounded-full py-1 inline-block px-3">6 уроков</div>
+            </div>
+            <div onclick="goToPage('sections'); selectSection('dynamics')" class="card btn-hover p-6 md:p-8 text-center cursor-pointer bg-gradient-to-br from-red-50 to-red-100 border-red-200">
+              <div class="text-6xl mb-4">💪</div>
+              <h3 class="font-bold text-purple-800 mb-2 text-lg">Динамика</h3>
+              <p class="text-sm text-gray-700">Силы и законы Ньютона</p>
+              <div class="mt-4 text-xs font-bold text-red-600 bg-red-200 rounded-full py-1 inline-block px-3">7 уроков</div>
+            </div>
+            <div onclick="goToPage('sections'); selectSection('statics')" class="card btn-hover p-6 md:p-8 text-center cursor-pointer bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+              <div class="text-6xl mb-4">⚖️</div>
+              <h3 class="font-bold text-purple-800 mb-2 text-lg">Статика</h3>
+              <p class="text-sm text-gray-700">Равновесие и моменты</p>
+              <div class="mt-4 text-xs font-bold text-green-600 bg-green-200 rounded-full py-1 inline-block px-3">4 урока</div>
+            </div>
+            <div onclick="goToPage('sections'); selectSection('conservation')" class="card btn-hover p-6 md:p-8 text-center cursor-pointer bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200">
+              <div class="text-6xl mb-4">⚡</div>
+              <h3 class="font-bold text-purple-800 mb-2 text-lg">Сохранение</h3>
+              <p class="text-sm text-gray-700">Импульс и энергия</p>
+              <div class="mt-4 text-xs font-bold text-amber-600 bg-amber-200 rounded-full py-1 inline-block px-3">7 уроков</div>
+            </div>
+          </div>
+
+          <!-- Stats Section (обнулено) -->
+          <div class="bg-gradient-to-r from-purple-600 to-violet-600 rounded-2xl p-6 md:p-10 text-white mb-10 shadow-2xl">
+            <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">📊 Портал в цифрах</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
+              <div class="text-center">
+                <div class="text-3xl md:text-4xl font-bold" id="visit-stat">0</div>
+                <div class="text-sm md:text-base text-purple-100">Визитов</div>
+              </div>
+              <div class="text-center">
+                <div class="text-3xl md:text-4xl font-bold" id="student-stat">0</div>
+                <div class="text-sm md:text-base text-purple-100">Учеников</div>
+              </div>
+              <div class="text-center">
+                <div class="text-3xl md:text-4xl font-bold" id="task-stat">0</div>
+                <div class="text-sm md:text-base text-purple-100">Решено</div>
+              </div>
+              <div class="text-center">
+                <div class="text-3xl md:text-4xl font-bold" id="test-stat">0</div>
+                <div class="text-sm md:text-base text-purple-100">Тестов</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Features (unchanged) -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div class="card p-6 md:p-8 text-center">
+              <div class="text-5xl mb-3">🎯</div>
+              <h3 class="font-bold text-lg mb-2">Интерактивные задания</h3>
+              <p class="text-sm text-gray-700">Решайте задачи прямо на сайте с моментальной проверкой</p>
+            </div>
+            <div class="card p-6 md:p-8 text-center">
+              <div class="text-5xl mb-3">📈</div>
+              <h3 class="font-bold text-lg mb-2">Прогресс в реальном времени</h3>
+              <p class="text-sm text-gray-700">Отслеживайте свой прогресс и видьте улучшения</p>
+            </div>
+            <div class="card p-6 md:p-8 text-center">
+              <div class="text-5xl mb-3">🏆</div>
+              <h3 class="font-bold text-lg mb-2">Достижения и сертификаты</h3>
+              <p class="text-sm text-gray-700">Получайте награды за успешное завершение тем</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Sections Page -->
+    <div id="page-sections" class="page animate-fade-in">
+      <!-- Краткое описание страницы -->
+      <div class="bg-purple-100 border-l-8 border-purple-700 p-4 mb-2 mx-4 mt-4 rounded-r-lg">
+        <p class="text-sm font-semibold text-purple-900">📚 <span class="underline">Разделы физики:</span> теория по кинематике, динамике, статике и законам сохранения. Листайте уроки и изучайте материал с формулами и примерами.</p>
+      </div>
+      <section class="px-4 py-6">
+        <div class="max-w-5xl mx-auto">
+          <h1 class="text-3xl md:text-4xl font-bold mb-2 gradient-text">📚 Разделы физики</h1>
+          <p class="text-gray-700 mb-6">Выберите раздел для углубленного изучения</p>
+          <div class="flex flex-wrap gap-2 mb-8 overflow-x-auto pb-3"><button onclick="selectSection('kinematics')" class="section-tab active">🚗 Кинематика</button> <button onclick="selectSection('dynamics')" class="section-tab">💪 Динамика</button> <button onclick="selectSection('statics')" class="section-tab">⚖️ Статика</button> <button onclick="selectSection('conservation')" class="section-tab">⚡ Сохранение</button>
+          </div>
+          <div id="section-content" class="card p-6 md:p-10 mb-6 space-y-4 text-sm md:text-base animate-fade-in"></div>
+          <div class="flex gap-3"><button id="prev-btn" onclick="prevLesson()" class="flex-1 px-6 py-3 bg-gray-300 text-gray-700 rounded-xl hover:bg-gray-400 transition font-bold text-sm md:text-base disabled:opacity-50">← Назад</button> <button id="next-btn" onclick="nextLesson()" class="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-xl hover:shadow-lg transition font-bold text-sm md:text-base">Далее →</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Tasks (Tests) Page -->
+    <div id="page-tasks" class="page animate-fade-in">
+      <!-- Краткое описание страницы -->
+      <div class="bg-purple-100 border-l-8 border-purple-700 p-4 mb-2 mx-4 mt-4 rounded-r-lg">
+        <p class="text-sm font-semibold text-purple-900">🎯 <span class="underline">Тесты:</span> проверьте свои знания! Выберите тему и ответьте на вопросы. Каждый правильный ответ увеличивает счётчик решённых задач.</p>
+      </div>
+      <section class="px-4 py-6">
+        <div class="max-w-5xl mx-auto">
+          <h1 class="text-3xl md:text-4xl font-bold mb-2 gradient-text">🎯 Тесты и проверка</h1>
+          <p class="text-gray-700 mb-8">Проверьте свои знания через интерактивные тесты</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-6">
+            <div onclick="startQuiz('kinematics')" class="card btn-hover p-6 md:p-8 text-center cursor-pointer bg-gradient-to-br from-blue-50 to-blue-100">
+              <div class="text-6xl mb-4">🚗</div>
+              <h3 class="font-bold text-lg mb-1">Кинематика</h3>
+              <p class="text-xs md:text-sm text-gray-600 mb-4">10 вопросов</p>
+              <div class="w-full px-4 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-bold text-sm">
+                Начать тест
+              </div>
+            </div>
+            <div onclick="startQuiz('dynamics')" class="card btn-hover p-6 md:p-8 text-center cursor-pointer bg-gradient-to-br from-red-50 to-red-100">
+              <div class="text-6xl mb-4">💪</div>
+              <h3 class="font-bold text-lg mb-1">Динамика</h3>
+              <p class="text-xs md:text-sm text-gray-600 mb-4">10 вопросов</p>
+              <div class="w-full px-4 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 font-bold text-sm">
+                Начать тест
+              </div>
+            </div>
+            <div onclick="startQuiz('statics')" class="card btn-hover p-6 md:p-8 text-center cursor-pointer bg-gradient-to-br from-green-50 to-green-100">
+              <div class="text-6xl mb-4">⚖️</div>
+              <h3 class="font-bold text-lg mb-1">Статика</h3>
+              <p class="text-xs md:text-sm text-gray-600 mb-4">8 вопросов</p>
+              <div class="w-full px-4 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 font-bold text-sm">
+                Начать тест
+              </div>
+            </div>
+            <div onclick="startQuiz('conservation')" class="card btn-hover p-6 md:p-8 text-center cursor-pointer bg-gradient-to-br from-amber-50 to-amber-100">
+              <div class="text-6xl mb-4">⚡</div>
+              <h3 class="font-bold text-lg mb-1">Сохранение</h3>
+              <p class="text-xs md:text-sm text-gray-600 mb-4">10 вопросов</p>
+              <div class="w-full px-4 py-3 bg-amber-600 text-white rounded-xl hover:bg-amber-700 font-bold text-sm">
+                Начать тест
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Interactive Tasks Page -->
+    <div id="page-interactive" class="page animate-fade-in">
+      <!-- Краткое описание страницы -->
+      <div class="bg-purple-100 border-l-8 border-purple-700 p-4 mb-2 mx-4 mt-4 rounded-r-lg">
+        <p class="text-sm font-semibold text-purple-900">🎮 <span class="underline">Интерактивные задания:</span> калькуляторы для расчёта скорости, ускорения, силы, энергии, момента и свободного падения. Каждый расчёт увеличивает счётчик решённых задач.</p>
+      </div>
+      <section class="px-4 py-6">
+        <div class="max-w-5xl mx-auto">
+          <h1 class="text-3xl md:text-4xl font-bold mb-2 gradient-text">🎮 Интерактивные задания</h1>
+          <p class="text-gray-700 mb-6">Решайте задачи и тренируйтесь прямо здесь!</p>
+          <div class="space-y-6"><!-- Task 1: Speed Calculator -->
+            <div class="interactive-task">
+              <h3 class="text-lg font-bold text-purple-800 mb-4">📏 Расчёт скорости</h3>
+              <div class="bg-white rounded-lg p-4 space-y-3">
+                <div><label class="text-sm font-semibold text-gray-700">Расстояние (км):</label> <input id="dist-input" type="number" placeholder="120" class="w-full px-3 py-2 border-2 border-purple-300 rounded-lg focus:border-purple-600 focus:outline-none" value="120">
+                </div>
+                <div><label class="text-sm font-semibold text-gray-700">Время (часы):</label> <input id="time-input" type="number" placeholder="2" class="w-full px-3 py-2 border-2 border-purple-300 rounded-lg focus:border-purple-600 focus:outline-none" value="2">
+                </div><button onclick="calculateSpeed()" class="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-bold">Рассчитать v (км/ч)</button>
+                <div id="speed-result" class="text-center text-sm"></div>
+              </div>
+            </div><!-- Task 2: Acceleration Calculator -->
+            <div class="interactive-task">
+              <h3 class="text-lg font-bold text-purple-800 mb-4">⚡ Расчёт ускорения</h3>
+              <div class="bg-white rounded-lg p-4 space-y-3">
+                <div><label class="text-sm font-semibold text-gray-700">Начальная скорость (м/с):</label> <input id="v0-input" type="number" placeholder="0" class="w-full px-3 py-2 border-2 border-purple-300 rounded-lg focus:border-purple-600 focus:outline-none" value="0">
+                </div>
+                <div><label class="text-sm font-semibold text-gray-700">Конечная скорость (м/с):</label> <input id="v-input" type="number" placeholder="20" class="w-full px-3 py-2 border-2 border-purple-300 rounded-lg focus:border-purple-600 focus:outline-none" value="20">
+                </div>
+                <div><label class="text-sm font-semibold text-gray-700">Время (сек):</label> <input id="t-input" type="number" placeholder="5" class="w-full px-3 py-2 border-2 border-purple-300 rounded-lg focus:border-purple-600 focus:outline-none" value="5">
+                </div><button onclick="calculateAcceleration()" class="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-bold">Рассчитать a (м/с²)</button>
+                <div id="accel-result" class="text-center text-sm"></div>
+              </div>
+            </div><!-- Task 3: Force Calculator -->
+            <div class="interactive-task">
+              <h3 class="text-lg font-bold text-purple-800 mb-4">💪 Расчёт силы (F = m * a)</h3>
+              <div class="bg-white rounded-lg p-4 space-y-3">
+                <div><label class="text-sm font-semibold text-gray-700">Масса (кг):</label> <input id="m-input" type="number" placeholder="5" class="w-full px-3 py-2 border-2 border-purple-300 rounded-lg focus:border-purple-600 focus:outline-none" value="5">
+                </div>
+                <div><label class="text-sm font-semibold text-gray-700">Ускорение (м/с²):</label> <input id="a-input" type="number" placeholder="2" class="w-full px-3 py-2 border-2 border-purple-300 rounded-lg focus:border-purple-600 focus:outline-none" value="2">
+                </div><button onclick="calculateForce()" class="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-bold">Рассчитать F (Н)</button>
+                <div id="force-result" class="text-center text-sm"></div>
+              </div>
+            </div><!-- Task 4: Energy Calculator -->
+            <div class="interactive-task">
+              <h3 class="text-lg font-bold text-purple-800 mb-4">⚡ Кинетическая энергия (E = m * v² / 2)</h3>
+              <div class="bg-white rounded-lg p-4 space-y-3">
+                <div><label class="text-sm font-semibold text-gray-700">Масса (кг):</label> <input id="em-input" type="number" placeholder="10" class="w-full px-3 py-2 border-2 border-purple-300 rounded-lg focus:border-purple-600 focus:outline-none" value="10">
+                </div>
+                <div><label class="text-sm font-semibold text-gray-700">Скорость (м/с):</label> <input id="ev-input" type="number" placeholder="15" class="w-full px-3 py-2 border-2 border-purple-300 rounded-lg focus:border-purple-600 focus:outline-none" value="15">
+                </div><button onclick="calculateEnergy()" class="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-bold">Рассчитать E (Дж)</button>
+                <div id="energy-result" class="text-center text-sm"></div>
+              </div>
+            </div><!-- Task 5: Free Fall -->
+            <div class="interactive-task">
+              <h3 class="text-lg font-bold text-purple-800 mb-4">📍 Свободное падение (v = √(2 * g * h))</h3>
+              <div class="bg-white rounded-lg p-4 space-y-3">
+                <div><label class="text-sm font-semibold text-gray-700">Высота (м):</label> <input id="h-input" type="number" placeholder="20" class="w-full px-3 py-2 border-2 border-purple-300 rounded-lg focus:border-purple-600 focus:outline-none" value="20">
+                </div>
+                <p class="text-xs text-gray-600">(g = 10 м/с²)</p><button onclick="calculateFallVelocity()" class="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-bold">Рассчитать v (м/с)</button>
+                <div id="fall-result" class="text-center text-sm"></div>
+              </div>
+            </div><!-- Task 6: Moment of Force -->
+            <div class="interactive-task">
+              <h3 class="text-lg font-bold text-purple-800 mb-4">⚖️ Момент силы (M = F * d)</h3>
+              <div class="bg-white rounded-lg p-4 space-y-3">
+                <div><label class="text-sm font-semibold text-gray-700">Сила (Н):</label> <input id="f-input" type="number" placeholder="50" class="w-full px-3 py-2 border-2 border-purple-300 rounded-lg focus:border-purple-600 focus:outline-none" value="50">
+                </div>
+                <div><label class="text-sm font-semibold text-gray-700">Плечо силы (м):</label> <input id="d-input" type="number" placeholder="0.5" class="w-full px-3 py-2 border-2 border-purple-300 rounded-lg focus:border-purple-600 focus:outline-none" value="0.5">
+                </div><button onclick="calculateMoment()" class="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-bold">Рассчитать M (Н·м)</button>
+                <div id="moment-result" class="text-center text-sm"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Connections Page -->
+    <div id="page-connections" class="page animate-fade-in">
+      <!-- Краткое описание страницы -->
+      <div class="bg-purple-100 border-l-8 border-purple-700 p-4 mb-2 mx-4 mt-4 rounded-r-lg">
+        <p class="text-sm font-semibold text-purple-900">🌍 <span class="underline">Межпредметные связи:</span> как физика пересекается с математикой, химией, спортом, биологией и техникой. Примеры из жизни и работ школьников.</p>
+      </div>
+      <section class="px-4 py-6">
+        <div class="max-w-5xl mx-auto">
+          <h1 class="text-3xl md:text-4xl font-bold mb-2 gradient-text">🌍 Межпредметные связи</h1>
+          <p class="text-gray-700 mb-8">Физика в нашей жизни и в других науках</p>
+          <div class="space-y-6"><!-- Physics & Math -->
+            <div class="card p-6 md:p-8 bg-gradient-to-br from-blue-50 to-indigo-100 border-blue-300">
+              <h3 class="text-xl font-bold text-blue-900 mb-4 flex items-center gap-2">📚 Физика ↔ Математика</h3>
+              <div class="space-y-3 text-sm">
+                <div class="bg-white rounded-lg p-4">
+                  <p class="font-semibold text-blue-900 mb-1">📐 Векторы в физике</p>
+                  <p class="text-gray-700">Перемещение, сила, скорость - все это векторные величины</p>
+                  <div class="mt-2 text-xs font-bold text-blue-600">
+                    Применение: Расчет результирующей силы, сложение скоростей
+                  </div>
+                </div>
+                <div class="bg-white rounded-lg p-4">
+                  <p class="font-semibold text-blue-900 mb-1">📊 Графики и функции</p>
+                  <p class="text-gray-700">График зависимости v(t), s(t) помогают понять движение</p>
+                  <div class="mt-2 text-xs font-bold text-blue-600">
+                    Применение: Анализ характера движения
+                  </div>
+                </div>
+                <div class="bg-white rounded-lg p-4">
+                  <p class="font-semibold text-blue-900 mb-1">🧮 Производные</p>
+                  <p class="text-gray-700">v = ds/dt, a = dv/dt - производные пути по времени</p>
+                  <div class="mt-2 text-xs font-bold text-blue-600">
+                    Применение: Мгновенная скорость и ускорение
+                  </div>
+                </div>
+              </div>
+            </div><!-- Physics & Chemistry -->
+            <div class="card p-6 md:p-8 bg-gradient-to-br from-green-50 to-emerald-100 border-green-300">
+              <h3 class="text-xl font-bold text-green-900 mb-4 flex items-center gap-2">🧪 Физика ↔ Химия</h3>
+              <div class="space-y-3 text-sm">
+                <div class="bg-white rounded-lg p-4">
+                  <p class="font-semibold text-green-900 mb-1">💨 Молекулярное движение</p>
+                  <p class="text-gray-700">Кинетическая энергия молекул объясняет температуру газов</p>
+                  <div class="mt-2 text-xs font-bold text-green-600">
+                    Пример: Броуновское движение частиц
+                  </div>
+                </div>
+                <div class="bg-white rounded-lg p-4">
+                  <p class="font-semibold text-green-900 mb-1">⚡ Энергия реакций</p>
+                  <p class="text-gray-700">Энергия освобождается при разрыве и образовании связей</p>
+                  <div class="mt-2 text-xs font-bold text-green-600">
+                    Пример: Горение топлива, экзотермические реакции
+                  </div>
+                </div>
+                <div class="bg-white rounded-lg p-4">
+                  <p class="font-semibold text-green-900 mb-1">🎯 Столкновения молекул</p>
+                  <p class="text-gray-700">Импульс и энергия в химических процессах</p>
+                  <div class="mt-2 text-xs font-bold text-green-600">
+                    Пример: Скорость химической реакции
+                  </div>
+                </div>
+              </div>
+            </div><!-- Physics & Sport -->
+            <div class="card p-6 md:p-8 bg-gradient-to-br from-red-50 to-pink-100 border-red-300">
+              <h3 class="text-xl font-bold text-red-900 mb-4 flex items-center gap-2">🏃 Физика в спорте</h3>
+              <div class="space-y-3 text-sm">
+                <div class="bg-white rounded-lg p-4">
+                  <p class="font-semibold text-red-900 mb-1">🏀 Траектория в баскетболе</p>
+                  <p class="text-gray-700">Угол броска, начальная скорость - все влияет на полет мяча</p>
+                  <div class="mt-2 text-xs font-bold text-red-600">
+                    💡 Совет: Оптимальный угол ~ 45° для максимальной дальности
+                  </div>
+                </div>
+                <div class="bg-white rounded-lg p-4">
+                  <p class="font-semibold text-red-900 mb-1">🏋️ Сила мышц</p>
+                  <p class="text-gray-700">F = m * a применяется для ускорения снарядов</p>
+                  <div class="mt-2 text-xs font-bold text-red-600">
+                    💡 Совет: Больше масса мышц = больше сила
+                  </div>
+                </div>
+                <div class="bg-white rounded-lg p-4">
+                  <p class="font-semibold text-red-900 mb-1">⚡ Энергия при беге</p>
+                  <p class="text-gray-700">Кинетическая энергия бегуна E = m * v² / 2</p>
+                  <div class="mt-2 text-xs font-bold text-red-600">
+                    💡 Совет: При удвоении скорости энергия увеличится в 4 раза!
+                  </div>
+                </div>
+              </div>
+            </div><!-- Physics & Biology -->
+            <div class="card p-6 md:p-8 bg-gradient-to-br from-purple-50 to-violet-100 border-purple-300">
+              <h3 class="text-xl font-bold text-purple-900 mb-4 flex items-center gap-2">🦴 Физика в биологии</h3>
+              <div class="space-y-3 text-sm">
+                <div class="bg-white rounded-lg p-4">
+                  <p class="font-semibold text-purple-900 mb-1">🦵 Биомеханика скелета</p>
+                  <p class="text-gray-700">Кости работают как рычаги, суставы - как опоры</p>
+                  <div class="mt-2 text-xs font-bold text-purple-600">
+                    Пример: Локтевой сустав при поднятии груза
+                  </div>
+                </div>
+                <div class="bg-white rounded-lg p-4">
+                  <p class="font-semibold text-purple-900 mb-1">❤️ Давление в сосудах</p>
+                  <p class="text-gray-700">Кровяное давление - результат работы сердца</p>
+                  <div class="mt-2 text-xs font-bold text-purple-600">
+                    Норма: 120/80 мм рт. ст.
+                  </div>
+                </div>
+                <div class="bg-white rounded-lg p-4">
+                  <p class="font-semibold text-purple-900 mb-1">👁️ Оптика глаза</p>
+                  <p class="text-gray-700">Хрусталик работает как линза, сетчатка - как экран</p>
+                  <div class="mt-2 text-xs font-bold text-purple-600">
+                    Пример: Миопия и гиперметропия
+                  </div>
+                </div>
+              </div>
+            </div><!-- Physics & Technology -->
+            <div class="card p-6 md:p-8 bg-gradient-to-br from-orange-50 to-yellow-100 border-orange-300">
+              <h3 class="text-xl font-bold text-orange-900 mb-4 flex items-center gap-2">🚀 Физика в технике</h3>
+              <div class="space-y-3 text-sm">
+                <div class="bg-white rounded-lg p-4">
+                  <p class="font-semibold text-orange-900 mb-1">✈️ Авиация</p>
+                  <p class="text-gray-700">Аэродинамика, подъемная сила крыла, инерция</p>
+                  <div class="mt-2 text-xs font-bold text-orange-600">
+                    Применение: Расчет траектории полета
+                  </div>
+                </div>
+                <div class="bg-white rounded-lg p-4">
+                  <p class="font-semibold text-orange-900 mb-1">⚙️ Двигатели</p>
+                  <p class="text-gray-700">Закон сохранения энергии в ДВС</p>
+                  <div class="mt-2 text-xs font-bold text-orange-600">
+                    КПД двигателя: только часть энергии превращается в механическую
+                  </div>
+                </div>
+                <div class="bg-white rounded-lg p-4">
+                  <p class="font-semibold text-orange-900 mb-1">🛰️ Спутники</p>
+                  <p class="text-gray-700">Геостационарная орбита, скорость спутника</p>
+                  <div class="mt-2 text-xs font-bold text-orange-600">
+                    Высота орбиты: 35 786 км от Земли
+                  </div>
+                </div>
+              </div>
+            </div><!-- Student Work Examples -->
+            <div class="card p-6 md:p-8 bg-gradient-to-br from-cyan-50 to-blue-100 border-cyan-300">
+              <h3 class="text-xl font-bold text-cyan-900 mb-4 flex items-center gap-2">🏆 Работы школьников</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white rounded-lg p-4 hover:shadow-lg transition">
+                  <p class="font-bold text-cyan-900 mb-2">🎥 Проект: Баллистика</p>
+                  <p class="text-sm text-gray-700 mb-2">Ученики 9А класса снимали видео полета мяча и анализировали траекторию с помощью физических формул</p>
+                  <p class="text-xs font-bold text-cyan-600">📊 Результат: 95/100</p>
+                </div>
+                <div class="bg-white rounded-lg p-4 hover:shadow-lg transition">
+                  <p class="font-bold text-cyan-900 mb-2">🔬 Исследование: Трение</p>
+                  <p class="text-sm text-gray-700 mb-2">Измерение коэффициента трения на разных поверхностях практическим способом</p>
+                  <p class="text-xs font-bold text-cyan-600">📊 Результат: 92/100</p>
+                </div>
+                <div class="bg-white rounded-lg p-4 hover:shadow-lg transition">
+                  <p class="font-bold text-cyan-900 mb-2">🎯 Презентация: Энергия</p>
+                  <p class="text-sm text-gray-700 mb-2">Интерактивная презентация о преобразовании энергии в природе</p>
+                  <p class="text-xs font-bold text-cyan-600">📊 Результат: 94/100</p>
+                </div>
+                <div class="bg-white rounded-lg p-4 hover:shadow-lg transition">
+                  <p class="font-bold text-cyan-900 mb-2">🚀 Модель: Ракета</p>
+                  <p class="text-sm text-gray-700 mb-2">Собрана водяная ракета и проведены расчеты максимальной высоты</p>
+                  <p class="text-xs font-bold text-cyan-600">📊 Результат: 96/100</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Authors Page -->
+    <div id="page-authors" class="page animate-fade-in">
+      <!-- Краткое описание страницы -->
+      <div class="bg-purple-100 border-l-8 border-purple-700 p-4 mb-2 mx-4 mt-4 rounded-r-lg">
+        <p class="text-sm font-semibold text-purple-900">👩‍🎓 <span class="underline">Авторы проекта:</span> команда талантливых разработчиц, создавших этот образовательный портал.</p>
+      </div>
+      <section class="px-4 py-6">
+        <div class="max-w-5xl mx-auto text-center">
+          <h1 class="text-3xl md:text-4xl font-bold mb-2 gradient-text">👩‍🎓 Авторы проекта</h1>
+          <p class="text-gray-700 mb-8">Над созданием портала «физиКАЯ» работали</p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="card p-6 bg-white/80 hover:scale-105 transition">
+              <div class="text-6xl mb-3"><img src="анжелика.jpg "></div>
+              <h3 class="font-bold text-xl text-purple-800">Гулецкая Анжелика</h3>
+              <p class="text-sm text-gray-600 mt-2">Специалист по контенту и теории</p>
+            </div>
+            <div class="card p-6 bg-white/80 hover:scale-105 transition">
+              <div class="text-6xl mb-3"><img src="яна.jpg"></div>
+              <h3 class="font-bold text-xl text-purple-800">Кононенко Яна</h3>
+              <p class="text-sm text-gray-600 mt-2">Разработка интерактива и тестов</p>
+            </div>
+            <div class="card p-6 bg-white/80 hover:scale-105 transition">
+              <div class="text-6xl mb-3"><img src="катя.jpg"></div>
+              <h3 class="font-bold text-xl text-purple-800">Котлинская Екатерина</h3>
+              <p class="text-sm text-gray-600 mt-2">Дизайн и межпредметные связи</p>
+            </div>
+          </div>
+          <p class="mt-8 text-sm text-gray-600">✨ Мы старались сделать физику доступной и интересной! 2026 ✨</p>
+        </div>
+      </section>
+    </div>
+
+   <!-- Teacher Page -->
+<div id="page-teacher" class="page animate-fade-in">
+  <section class="px-4 py-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold gradient-text">👨‍🏫 Кабинет учителя</h1>
+        <button onclick="logoutTeacher()" class="px-4 md:px-6 py-2 md:py-3 bg-red-500 text-white rounded-xl hover:bg-red-600 transition font-bold text-sm md:text-base">Выход →</button>
+      </div>
+      <div class="flex flex-wrap gap-2 mb-8 overflow-x-auto pb-2">
+        <button onclick="switchTeacherTab('ktp')" class="teacher-tab active bg-gradient-to-r from-purple-600 to-violet-600 text-white px-4 py-2 rounded-lg font-bold">📋 КТП</button>
+        <button onclick="switchTeacherTab('plans')" class="teacher-tab px-4 py-2 rounded-lg font-bold hover:bg-gray-200 transition">📝 План-конспекты</button>
+        <button onclick="switchTeacherTab('work')" class="teacher-tab px-4 py-2 rounded-lg font-bold hover:bg-gray-200 transition">✏️ Самостоятельные</button>
+      </div>
+
+      <!-- KTP Tab -->
+      <div id="tab-ktp" class="teacher-content card p-6 md:p-10">
+        <h2 class="text-2xl md:text-3xl font-bold text-purple-800 mb-6">📋 Календарно-тематическое планирование</h2>
+        <div class="space-y-4 mb-8">
+          <div class="border-l-4 border-blue-500 bg-blue-50 p-5 rounded-r-lg hover:shadow-lg transition">
+            <div class="flex justify-between items-start mb-2 flex-wrap gap-2">
+              <h4 class="font-bold text-lg text-blue-900">🚗 Кинематика</h4>
+              <span class="text-sm font-bold bg-blue-200 text-blue-800 px-3 py-1 rounded-full">28 часов</span>
+            </div>
+            <p class="text-gray-700 mb-2">Основные понятия, РПД, РУД, графики движения</p>
+            <div class="text-xs text-blue-600">
+              📌 Темы: Путь и перемещение • Скорость • Ускорение • Уравнения движения
+            </div>
+          </div>
+          <div class="border-l-4 border-red-500 bg-red-50 p-5 rounded-r-lg hover:shadow-lg transition">
+            <div class="flex justify-between items-start mb-2 flex-wrap gap-2">
+              <h4 class="font-bold text-lg text-red-900">💪 Динамика</h4>
+              <span class="text-sm font-bold bg-red-200 text-red-800 px-3 py-1 rounded-full">23 часа</span>
+            </div>
+            <p class="text-gray-700 mb-2">Законы Ньютона, силы, применение</p>
+            <div class="text-xs text-red-600">
+              📌 Темы: 1-й закон • 2-й закон • 3-й закон • Основные силы • Задачи
+            </div>
+          </div>
+          <div class="border-l-4 border-green-500 bg-green-50 p-5 rounded-r-lg hover:shadow-lg transition">
+            <div class="flex justify-between items-start mb-2 flex-wrap gap-2">
+              <h4 class="font-bold text-lg text-green-900">⚖️ Статика</h4>
+              <span class="text-sm font-bold bg-green-200 text-green-800 px-3 py-1 rounded-full">16 часов</span>
+            </div>
+            <p class="text-gray-700 mb-2">Равновесие тел, момент силы, рычаги</p>
+            <div class="text-xs text-green-600">
+              📌 Темы: Условия равновесия • Момент • Рычаги • ЦТ
+            </div>
+          </div>
+          <div class="border-l-4 border-amber-500 bg-amber-50 p-5 rounded-r-lg hover:shadow-lg transition">
+            <div class="flex justify-between items-start mb-2 flex-wrap gap-2">
+              <h4 class="font-bold text-lg text-amber-900">⚡ Сохранение</h4>
+              <span class="text-sm font-bold bg-amber-200 text-amber-800 px-3 py-1 rounded-full">15 часов</span>
+            </div>
+            <p class="text-gray-700 mb-2">Импульс, работа, энергия</p>
+            <div class="text-xs text-amber-600">
+              📌 Темы: Импульс • Энергия • Работа • Мощность • Закон сохранения
+            </div>
+          </div>
+        </div>
+        <div class="bg-gradient-to-r from-purple-100 to-violet-100 rounded-xl p-6 border-2 border-purple-300 mb-6">
+          <p class="text-purple-900 font-bold text-lg">📊 Итого: 85 часов</p>
+          <p class="text-sm text-purple-800 mt-2">Рекомендуемый график: 3/2 часа в неделю</p>
+        </div>
+        <!-- Ссылка на скачивание КТП 9 класс.pdf -->
+        <a href="КТП 9 класс.pdf" download
+           class="inline-block w-full md:w-auto px-8 py-3 bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-xl hover:shadow-lg transition font-bold text-base text-center">
+          📥 Скачать КТП (PDF)
+        </a>
+      </div>
+
+      <!-- Plans Tab (План-конспекты) -->
+      <div id="tab-plans" class="teacher-content card p-6 md:p-10 hidden">
+        <h2 class="text-2xl md:text-3xl font-bold text-purple-800 mb-6">📝 План-конспекты уроков</h2>
+        <div class="space-y-4">
+          <!-- Наклонная плоскость. КПД -->
+          <div class="border-2 border-gray-300 rounded-lg p-5 hover:shadow-lg transition bg-gradient-to-br from-blue-50 to-indigo-50">
+            <h4 class="font-bold text-lg text-purple-800 mb-2">Наклонная плоскость. КПД</h4>
+            <p class="text-gray-700 mb-3 text-sm">Изучение наклонной плоскости, коэффициента полезного действия, практические примеры.</p>
+            <div class="flex flex-wrap gap-2 mb-3">
+              <span class="text-xs bg-blue-200 text-blue-800 px-2 py-1 rounded">45 мин</span>
+              <span class="text-xs bg-green-200 text-green-800 px-2 py-1 rounded">PDF</span>
+            </div>
+            <a href="Наклонная_плоскость_КПД.pdf" download
+               class="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-bold">
+              📥 Скачать
+            </a>
+          </div>
+
+          <!-- Третий закон Ньютона. Принципы относительности Галилея -->
+          <div class="border-2 border-gray-300 rounded-lg p-5 hover:shadow-lg transition bg-gradient-to-br from-red-50 to-rose-50">
+            <h4 class="font-bold text-lg text-purple-800 mb-2">Третий закон Ньютона. Принципы относительности Галилея</h4>
+            <p class="text-gray-700 mb-3 text-sm">Взаимодействие тел, третий закон Ньютона, принцип относительности и его следствия.</p>
+            <div class="flex flex-wrap gap-2 mb-3">
+              <span class="text-xs bg-red-200 text-red-800 px-2 py-1 rounded">45 мин</span>
+              <span class="text-xs bg-green-200 text-green-800 px-2 py-1 rounded">PDF</span>
+            </div>
+            <a href="Третий_закон_Ньютона_Принципы_относительности_Галилея.pdf" download
+               class="inline-block px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-bold">
+              📥 Скачать
+            </a>
+          </div>
+
+          <!-- Вес. Невесомость и перегрузки -->
+          <div class="border-2 border-gray-300 rounded-lg p-5 hover:shadow-lg transition bg-gradient-to-br from-green-50 to-emerald-50">
+            <h4 class="font-bold text-lg text-purple-800 mb-2">Вес. Невесомость и перегрузки</h4>
+            <p class="text-gray-700 mb-3 text-sm">Понятие веса тела, невесомость, перегрузки в различных условиях движения.</p>
+            <div class="flex flex-wrap gap-2 mb-3">
+              <span class="text-xs bg-green-200 text-green-800 px-2 py-1 rounded">45 мин</span>
+              <span class="text-xs bg-green-200 text-green-800 px-2 py-1 rounded">PDF</span>
+            </div>
+            <a href="Вес. Невесомость и перегрузки.pdf" download
+               class="inline-block px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-bold">
+              📥 Скачать
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Work Tab (Самостоятельные) -->
+      <div id="tab-work" class="teacher-content card p-6 md:p-10 hidden">
+        <h2 class="text-2xl md:text-3xl font-bold text-purple-800 mb-6">✏️ Самостоятельные работы</h2>
+        <div class="space-y-4">
+          <div class="border-l-4 border-blue-500 bg-white p-5 rounded-lg hover:shadow-lg transition">
+            <h4 class="font-bold text-lg text-purple-800 mb-2">СР №1: Кинематика</h4>
+            <p class="text-gray-700 mb-3 text-sm">5 задач на скорость и путь, уровень сложности - базовый</p>
+            <div class="flex flex-wrap gap-2"><span class="text-xs bg-blue-200 text-blue-800 px-2 py-1 rounded">5 задач</span> <span class="text-xs bg-purple-200 text-purple-800 px-2 py-1 rounded">20 мин</span>
+            </div><button onclick="downloadFile('work1')" class="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-bold">📥 PDF</button>
+          </div>
+          <div class="border-l-4 border-purple-500 bg-white p-5 rounded-lg hover:shadow-lg transition">
+            <h4 class="font-bold text-lg text-purple-800 mb-2">Тест №1: Динамика</h4>
+            <p class="text-gray-700 mb-3 text-sm">10 вопросов на законы Ньютона, уровень - средний</p>
+            <div class="flex flex-wrap gap-2"><span class="text-xs bg-purple-200 text-purple-800 px-2 py-1 rounded">10 вопросов</span> <span class="text-xs bg-purple-200 text-purple-800 px-2 py-1 rounded">15 мин</span>
+            </div><button onclick="downloadFile('work2')" class="mt-3 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm font-bold">📥 PDF</button>
+          </div>
+          <div class="border-l-4 border-green-500 bg-white p-5 rounded-lg hover:shadow-lg transition">
+            <h4 class="font-bold text-lg text-purple-800 mb-2">КР: Механика (Итоговая)</h4>
+            <p class="text-gray-700 mb-3 text-sm">Комплексная проверка знаний всех разделов, уровень - высокий</p>
+            <div class="flex flex-wrap gap-2"><span class="text-xs bg-green-200 text-green-800 px-2 py-1 rounded">20 задач</span> <span class="text-xs bg-green-200 text-green-800 px-2 py-1 rounded">60 мин</span>
+            </div><button onclick="downloadFile('work3')" class="mt-3 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-bold">📥 PDF</button>
+          </div>
+          <div class="border-l-4 border-amber-500 bg-white p-5 rounded-lg hover:shadow-lg transition">
+            <h4 class="font-bold text-lg text-purple-800 mb-2">Тест №2: Энергия</h4>
+            <p class="text-gray-700 mb-3 text-sm">8 вопросов о кинетической и потенциальной энергии</p>
+            <div class="flex flex-wrap gap-2"><span class="text-xs bg-amber-200 text-amber-800 px-2 py-1 rounded">8 вопросов</span> <span class="text-xs bg-amber-200 text-amber-800 px-2 py-1 rounded">12 мин</span>
+            </div><button onclick="downloadFile('work4')" class="mt-3 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 text-sm font-bold">📥 PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+  <!-- Footer with Stats (обнулено) -->
+  <footer class="bg-gradient-to-r from-purple-800 via-violet-800 to-fuchsia-800 text-white py-4 md:py-5 px-4 text-xs md:text-sm shadow-2xl">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6">
+        <div class="flex flex-wrap gap-3 md:gap-6 justify-center md:justify-start text-xs md:text-sm">
+          <div class="stat-item">
+            <div class="font-bold text-lg md:text-xl" id="visits">0</div>
+            <div class="text-purple-200 text-xs">👁️ Визитов</div>
+          </div>
+          <div class="stat-item">
+            <div class="font-bold text-lg md:text-xl" id="students">0</div>
+            <div class="text-purple-200 text-xs">📚 Учеников</div>
+          </div>
+          <div class="stat-item">
+            <div class="font-bold text-lg md:text-xl" id="tasks">0</div>
+            <div class="text-purple-200 text-xs">✅ Решено</div>
+          </div>
+          <div class="stat-item">
+            <div class="font-bold text-lg md:text-xl" id="tests">0</div>
+            <div class="text-purple-200 text-xs">🎯 Тестов</div>
+          </div>
+        </div>
+        <div class="text-center md:text-right text-purple-200 text-xs md:text-sm">
+          <p>© 2026 ⚛️ физиКАЯ класс | Образовательный портал</p>
+          <p class="text-xs">Создано для студентов и учителей 🚀</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- Login Modal -->
+<div id="login-modal" class="modal">
+  <div class="modal-content">
+    <div class="bg-gradient-to-r from-purple-600 to-violet-600 p-6 md:p-8 text-white flex justify-between items-center rounded-t-2xl">
+      <h3 class="text-2xl md:text-3xl font-bold">👨‍🏫 Вход для учителей</h3><button onclick="hideLoginModal()" class="text-3xl hover:opacity-70 transition">✕</button>
+    </div>
+    <form id="login-form" class="p-6 md:p-8 space-y-5" onsubmit="handleLogin(event)">
+      <div><label class="block text-gray-800 font-bold mb-2 text-sm">Email</label> <input type="email" required class="w-full px-4 py-3 border-2 border-purple-300 rounded-lg focus:border-purple-600 focus:outline-none text-sm" placeholder="teacher@school.ru">
+      </div>
+      <div><label class="block text-gray-800 font-bold mb-2 text-sm">Пароль</label> <input type="password" required class="w-full px-4 py-3 border-2 border-purple-300 rounded-lg focus:border-purple-600 focus:outline-none text-sm" placeholder="••••••••">
+      </div><button type="submit" class="w-full py-3 md:py-4 bg-gradient-to-r from-purple-600 to-violet-600 text-white font-bold rounded-lg hover:shadow-lg transition text-base md:text-lg">Войти →</button>
+    </form>
+  </div>
+</div>
+
+<!-- Quiz Modal -->
+<div id="quiz-modal" class="modal">
+  <div class="modal-content">
+    <div class="bg-gradient-to-r from-purple-600 to-violet-600 p-6 md:p-8 text-white flex justify-between items-center rounded-t-2xl">
+      <h3 class="text-2xl md:text-3xl font-bold">🎯 Тестирование</h3><button onclick="closeQuiz()" class="text-3xl hover:opacity-70 transition">✕</button>
+    </div>
+    <div id="quiz-content" class="p-6 md:p-8 max-h-96 overflow-y-auto"></div>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="fixed bottom-4 right-4 hidden bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 py-4 rounded-xl shadow-2xl z-50 text-sm md:text-base font-bold animate-fade-in">
+  ✓ <span id="toast-text"></span>
+</div>
+
+<script>
+  // Data SDK initialization
+  let stats = { visits: 0, students: 0, tasks: 0, tests: 0 };
+
+  const dataHandler = {
+    onDataChanged(data) {
+      if (data.length > 0) {
+        const latest = data[data.length - 1];
+        stats = {
+          visits: latest.visit_count || 0,
+          students: latest.student_count || 0,
+          tasks: latest.task_count || 0,
+          tests: latest.test_count || 0
+        };
+        updateStats();
+      }
+    }
+  };
+
+  async function initializeSDK() {
+    if (window.dataSdk) {
+      await window.dataSdk.init(dataHandler);
+      incrementVisits();
+    }
+  }
+
+  async function incrementVisits() {
+    if (window.dataSdk) {
+      const result = await window.dataSdk.create({
+        visit_count: stats.visits + 1,
+        student_count: stats.students,
+        task_count: stats.tasks,
+        test_count: stats.tests,
+        timestamp: new Date().toISOString()
+      });
+    }
+    stats.visits++;
+    updateStats();
+  }
+
+  function updateStats() {
+    document.getElementById('visit-stat').textContent = stats.visits;
+    document.getElementById('student-stat').textContent = stats.students;
+    document.getElementById('task-stat').textContent = stats.tasks;
+    document.getElementById('test-stat').textContent = stats.tests;
+    document.getElementById('visits').textContent = stats.visits;
+    document.getElementById('students').textContent = stats.students;
+    document.getElementById('tasks').textContent = stats.tasks;
+    document.getElementById('tests').textContent = stats.tests;
+  }
+
+  initializeSDK();
+
+  // Sections Data
+  const sections = {
+    kinematics: [
+      {
+        title: '1️⃣ Основные понятия',
+        content: `
+            <h3 class="text-2xl font-bold text-purple-800 mb-4">Основные понятия кинематики</h3>
+            <div class="definition-box">
+              <strong>🎯 Кинематика</strong> — раздел механики, изучающий движение тел, не рассматривая причины, вызывающие это движение.
+            </div>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-6 mb-3">📍 Материальная точка</h4>
+            <p class="mb-4">Тело, размеры которого пренебрежимо малы по сравнению с расстояниями в задаче. Это упрощение позволяет не учитывать вращение и деформацию тела.</p>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-6 mb-3">📏 Путь (S) и перемещение (s)</h4>
+            <div class="example-box">
+              <strong>📌 Путь</strong> — длина траектории, которую описало тело [м] (скалярная величина)<br><br>
+              <strong>📌 Перемещение</strong> — вектор, соединяющий начальное и конечное положение тела [м] (векторная величина)
+            </div>
+            <p class="mt-3 text-sm text-gray-700">💡 Важно: Путь ≥ |перемещение|. Они равны только при прямолинейном движении в одну сторону!</p>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-6 mb-3">⚡ Скорость (v)</h4>
+            <div class="formula-box">
+              <strong>Средняя скорость:</strong> v = S / t [м/с]<br>
+              <strong>Мгновенная скорость:</strong> v = ds/dt
+            </div>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-6 mb-3">📈 Ускорение (a)</h4>
+            <div class="formula-box">
+              a = (v - v₀) / t [м/с²]
+            </div>
+            <p class="mt-3 text-sm text-gray-700">💡 Ускорение показывает, на сколько изменяется скорость за единицу времени</p>
+            
+            <div class="example-box mt-6">
+              <strong>✅ Пример:</strong><br>
+              Автомобиль проехал 120 км за 2 часа.<br>
+              v = 120/2 = 60 км/ч = 16,7 м/с ✓
+            </div>
+          `
+      },
+      {
+        title: '2️⃣ РРД и РУД',
+        content: `
+            <h3 class="text-2xl font-bold text-purple-800 mb-4">Виды прямолинейного движения</h3>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-4 mb-3">🔵 РРД (Равномерное Прямолинейное Движение)</h4>
+            <div class="definition-box">
+              Движение с постоянной скоростью (v = const, a = 0)
+            </div>
+            <div class="formula-box">
+              s = v * t<br>
+              x = x₀ + v * t
+            </div>
+            <p class="text-sm text-gray-700 mt-2">Используется: автомобиль на трассе, поезд между станциями</p>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-6 mb-3">🔴 РУД (Равноускоренное Движение)</h4>
+            <div class="definition-box">
+              Движение с постоянным ускорением (a = const ≠ 0)
+            </div>
+            <div class="formula-box">
+              v = v₀ + a * t<br>
+              s = v₀ * t + a * t² / 2<br>
+              v² = v₀² + 2 * a * s
+            </div>
+            <p class="text-sm text-gray-700 mt-2">Используется: разгон автомобиля, падение предмета</p>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-6 mb-3">📊 Графики движения</h4>
+            <div class="scheme-svg">
+              <svg viewBox="0 0 320 140" class="w-full">
+                <!-- РРД графики -->
+                <text x="20" y="20" font-weight="bold" font-size="13">РРД</text>
+                <text x="20" y="65" font-size="11" fill="#666">v-t</text>
+                <line x1="20" y1="45" x2="85" y2="45" stroke="#ddd" stroke-width="2"/>
+                <line x1="20" y1="45" x2="20" y2="95" stroke="#ddd" stroke-width="2"/>
+                <line x1="20" y1="70" x2="85" y2="70" stroke="#3b82f6" stroke-width="3"/>
+                <text x="95" y="20" font-weight="bold" font-size="13">РУД</text>
+                <text x="95" y="65" font-size="11" fill="#666">v-t</text>
+                <line x1="95" y1="45" x2="160" y2="45" stroke="#ddd" stroke-width="2"/>
+                <line x1="95" y1="45" x2="95" y2="95" stroke="#ddd" stroke-width="2"/>
+                <line x1="95" y1="85" x2="160" y2="45" stroke="#10b981" stroke-width="3"/>
+                <text x="175" y="20" font-weight="bold" font-size="13">РУД</text>
+                <text x="175" y="65" font-size="11" fill="#666">s-t</text>
+                <line x1="175" y1="45" x2="240" y2="45" stroke="#ddd" stroke-width="2"/>
+                <line x1="175" y1="45" x2="175" y2="95" stroke="#ddd" stroke-width="2"/>
+                <path d="M 175 85 Q 207 65 240 45" stroke="#ef4444" stroke-width="3" fill="none"/>
+              </svg>
+            </div>
+            
+            <div class="example-box mt-6">
+              <strong>✅ Задача:</strong> Мотоциклист начинает с v₀=0, a=2 м/с². Какой путь за 5 сек?<br><br>
+              s = 0 * 5 + 2 * 5² / 2 = 2 * 25 / 2 = <strong>25 м</strong> ✓
+            </div>
+          `
+      },
+      {
+        title: '3️⃣ Решение задач',
+        content: `
+            <h3 class="text-2xl font-bold text-purple-800 mb-4">Методика решения задач по кинематике</h3>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-4 mb-3">📋 Алгоритм решения:</h4>
+            <ol class="space-y-2 text-sm mb-4">
+              <li><strong>1.</strong> Определить вид движения (РРД или РУД)</li>
+              <li><strong>2.</strong> Выписать известные величины</li>
+              <li><strong>3.</strong> Выбрать подходящую формулу</li>
+              <li><strong>4.</strong> Выполнить расчеты</li>
+              <li><strong>5.</strong> Проверить единицы измерения</li>
+            </ol>
+            
+            <div class="example-box">
+              <strong>✅ Задача 1 (РРД):</strong><br>
+              Поезд едет 72 км/ч. Какое расстояние он проедет за 30 сек?<br><br>
+              <strong>Решение:</strong><br>
+              v = 72 км/ч = 72/3,6 = 20 м/с<br>
+              s = v * t = 20 * 30 = <strong>600 м</strong> ✓
+            </div>
+            
+            <div class="example-box">
+              <strong>✅ Задача 2 (РУД):</strong><br>
+              Автомобиль разгоняется a=3 м/с², начальная скорость v₀=0. Какая скорость через 4 секунды?<br><br>
+              <strong>Решение:</strong><br>
+              v = v₀ + a * t = 0 + 3 * 4 = <strong>12 м/с</strong> ✓
+            </div>
+            
+            <div class="example-box">
+              <strong>✅ Задача 3 (встреча):</strong><br>
+              Мотоциклист v₁=30 м/с, велосипедист v₂=10 м/с едут навстречу. Расстояние 800м. Через сколько встретятся?<br><br>
+              <strong>Решение:</strong><br>
+              (v₁ + v₂) * t = S<br>
+              (30 + 10) * t = 800<br>
+              t = 800/40 = <strong>20 секунд</strong> ✓
+            </div>
+          `
+      }
+    ],
+    dynamics: [
+      {
+        title: '1️⃣ Законы Ньютона',
+        content: `
+            <h3 class="text-2xl font-bold text-purple-800 mb-4">Законы Ньютона - основа динамики</h3>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-4 mb-3">1️⃣ Первый закон (закон инерции)</h4>
+            <div class="definition-box">
+              Тело остается в состоянии покоя или равномерного прямолинейного движения, если на него не действуют силы или равнодействующая всех сил равна нулю.
+            </div>
+            <div class="formula-box">
+              ΣF = 0 → a = 0
+            </div>
+            <p class="text-sm text-gray-700 mt-2">💡 Это основа инерции - именно поэтому мы летим вперед при резком торможении!</p>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-6 mb-3">2️⃣ Второй закон (основной закон динамики)</h4>
+            <div class="definition-box">
+              Ускорение тела прямо пропорционально равнодействующей сил и обратно пропорционально его массе.
+            </div>
+            <div class="formula-box">
+              <strong>F = m * a [Н]</strong><br>
+              или в векторной форме: ΣF = m * a
+            </div>
+            <p class="text-sm text-gray-700 mt-2">💡 Более тяжелый объект требует большей силы для того же ускорения</p>
+            
+            <div class="example-box">
+              <strong>✅ Пример:</strong><br>
+              На тело m=5 кг действует сила F=20 Н. Какое ускорение?<br>
+              a = F/m = 20/5 = <strong>4 м/с²</strong> ✓
+            </div>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-6 mb-3">3️⃣ Третий закон (действия и противодействия)</h4>
+            <div class="definition-box">
+              Силы действия и противодействия между телами равны по модулю и противоположны по направлению.
+            </div>
+            <div class="formula-box">
+              F₁₂ = -F₂₁
+            </div>
+            <p class="text-sm text-gray-700 mt-2">💡 Когда вы прыгаете, вы отталкиваетесь от Земли, а Земля отталкивается от вас с такой же силой!</p>
+          `
+      },
+      {
+        title: '2️⃣ Основные силы',
+        content: `
+            <h3 class="text-2xl font-bold text-purple-800 mb-4">Силы в природе</h3>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-4 mb-3">1. 🪨 Сила тяжести (F_g)</h4>
+            <div class="formula-box">
+              F_g = m * g<br>
+              (g ≈ 10 м/с² или 9,8 м/с²)
+            </div>
+            <p class="text-sm text-gray-700 mt-2">Направлена вертикально вниз, к центру Земли</p>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-6 mb-3">2. ✊ Нормальная реакция (N)</h4>
+            <div class="definition-box">
+              Сила, с которой поверхность толкает предмет, лежащий на ней. Всегда перпендикулярна поверхности.
+            </div>
+            <p class="text-sm text-gray-700 mt-2">На горизонтальной поверхности без других сил: N = mg</p>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-6 mb-3">3. 🔗 Трение (f)</h4>
+            <div class="formula-box">
+              f = μ * N<br>
+              μ - коэффициент трения
+            </div>
+            <p class="text-sm text-gray-700 mt-2">Направлена противоположно движению, замедляет движение</p>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-6 mb-3">4. 🏹 Упругость (F_упр)</h4>
+            <div class="formula-box">
+              <strong>Закон Гука:</strong> F_упр = -k * x<br>
+              k - жесткость, x - деформация
+            </div>
+            <p class="text-sm text-gray-700 mt-2">Возникает при деформации пружины, стержня</p>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-6 mb-3">5. 🧵 Натяжение (T)</h4>
+            <p class="text-sm text-gray-700">Действие нити на предмет. Направлена вдоль нити, всегда тягучая (не может толкать)</p>
+          `
+      },
+      {
+        title: '3️⃣ Задачи динамики',
+        content: `
+            <h3 class="text-2xl font-bold text-purple-800 mb-4">Решение задач динамики</h3>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-4 mb-3">📋 Схема решения:</h4>
+            <ol class="space-y-2 text-sm mb-4 bg-blue-50 p-4 rounded-lg">
+              <li><strong>1.</strong> Нарисуйте все силы, действующие на тело</li>
+              <li><strong>2.</strong> Выберите систему координат (обычно x горизонтально, y вертикально)</li>
+              <li><strong>3.</strong> Напишите второй закон Ньютона в проекциях на оси</li>
+              <li><strong>4.</strong> Решите систему уравнений</li>
+              <li><strong>5.</strong> Найдите неизвестные величины</li>
+            </ol>
+            
+            <div class="example-box">
+              <strong>✅ Задача 1 (с трением):</strong><br>
+              Коробка m=10 кг лежит на столе. На нее действует F=50 Н. μ=0,2. Найти ускорение.<br><br>
+              <strong>Решение:</strong><br>
+              N = m * g = 10 * 10 = 100 Н (вверх)<br>
+              f = μ * N = 0,2 * 100 = 20 Н (против движения)<br>
+              F - f = m * a<br>
+              50 - 20 = 10 * a<br>
+              a = <strong>3 м/с²</strong> ✓
+            </div>
+            
+            <div class="example-box">
+              <strong>✅ Задача 2 (наклонная плоскость):</strong><br>
+              На плоскости с углом 30°, m=5 кг, трения нет. Найти ускорение.<br><br>
+              <strong>Решение:</strong><br>
+              F₁₁ = m * g * sin(30°) = 5 * 10 * 0,5 = 25 Н<br>
+              a = F₁₁/m = 25/5 = <strong>5 м/с²</strong> ✓
+            </div>
+          `
+      }
+    ],
+    statics: [
+      {
+        title: '1️⃣ Равновесие тел',
+        content: `
+            <h3 class="text-2xl font-bold text-purple-800 mb-4">Условия равновесия</h3>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-4 mb-3">✅ Условия равновесия абсолютно жестких тел:</h4>
+            
+            <div class="definition-box">
+              <strong>1-е условие:</strong> Сумма всех сил = 0<br>
+              ΣF = 0
+            </div>
+            <div class="formula-box">
+              ΣF_x = 0<br>
+              ΣF_y = 0
+            </div>
+            <p class="text-sm text-gray-700 mt-2">Тело не движется поступательно</p>
+            
+            <div class="definition-box">
+              <strong>2-е условие:</strong> Сумма всех моментов = 0<br>
+              ΣM = 0
+            </div>
+            <p class="text-sm text-gray-700 mt-2">Тело не вращается относительно оси</p>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-6 mb-3">📐 Момент силы (M):</h4>
+            <div class="formula-box">
+              <strong>M = F * d [Н·м]</strong><br>
+              d - плечо силы (расстояние от оси до линии действия силы)
+            </div>
+            <p class="text-sm text-gray-700 mt-2">Момент определяет вращающее действие силы</p>
+            
+            <div class="example-box">
+              <strong>✅ Пример момента:</strong><br>
+              F = 10 Н действует на расстоянии d = 0,5 м от оси<br>
+              M = 10 * 0,5 = <strong>5 Н·м</strong> ✓
+            </div>
+          `
+      },
+      {
+        title: '2️⃣ Рычаги и ЦТ',
+        content: `
+            <h3 class="text-2xl font-bold text-purple-800 mb-4">Рычаги и центр тяжести</h3>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-4 mb-3">🎪 Правило рычага:</h4>
+            <div class="definition-box">
+              Рычаг находится в равновесии, когда моменты сил относительно точки опоры равны.
+            </div>
+            <div class="formula-box">
+              <strong>M₁ = M₂</strong><br>
+              F₁ * d₁ = F₂ * d₂
+            </div>
+            
+            <div class="example-box">
+              <strong>✅ Пример:</strong><br>
+              Палка 2м, опирается в центре. На одном конце (0,5м) груз 100Н. На другом конце на расстоянии 1,5м нужна какая сила?<br><br>
+              F₁ * d₁ = F₂ * d₂<br>
+              100 * 0,5 = F * 1,5<br>
+              F = 50/1,5 = <strong>33,3 Н</strong> ✓
+            </div>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-6 mb-3">⚖️ Центр тяжести (ЦТ):</h4>
+            <p class="text-sm text-gray-700 mb-3">Точка приложения равнодействующей сил тяжести для однородных тел</p>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-4 mb-3">3️⃣ Виды равновесия:</h4>
+            <div class="bg-green-50 p-4 rounded-lg mb-3 border-l-4 border-green-500">
+              <p class="font-bold text-green-900 mb-1">✓ Устойчивое равновесие</p>
+              <p class="text-sm text-gray-700">ЦТ расположен ниже опоры. Тело возвращается в исходное положение</p>
+            </div>
+            <div class="bg-yellow-50 p-4 rounded-lg mb-3 border-l-4 border-yellow-500">
+              <p class="font-bold text-yellow-900 mb-1">⚠ Неустойчивое равновесие</p>
+              <p class="text-sm text-gray-700">ЦТ расположен выше опоры. Малое возмущение нарушает равновесие</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-gray-500">
+              <p class="font-bold text-gray-900 mb-1">~ Безразличное равновесие</p>
+              <p class="text-sm text-gray-700">ЦТ находится на опоре. Равновесие сохраняется при любом повороте</p>
+            </div>
+          `
+      },
+      {
+        title: '3️⃣ Задачи статики',
+        content: `
+            <h3 class="text-2xl font-bold text-purple-800 mb-4">Решение задач статики</h3>
+            
+            <div class="example-box">
+              <strong>✅ Задача 1 (наклонная плоскость):</strong><br>
+              Брусок m=5 кг находится на наклонной плоскости 30° в равновесии. Найти коэффициент трения.<br><br>
+              <strong>Решение:</strong><br>
+              P‖ = m * g * sin(30°) = 5 * 10 * 0,5 = 25 Н (вдоль плоскости)<br>
+              N = m * g * cos(30°) = 5 * 10 * 0,866 ≈ 43,3 Н (перпендикулярно)<br>
+              f = P‖ = 25 Н (трение уравновешивает)<br>
+              μ = f/N = 25/43,3 ≈ <strong>0,58</strong> ✓
+            </div>
+            
+            <div class="example-box">
+              <strong>✅ Задача 2 (рычаг):</strong><br>
+              Рычаг длиной 3м, опора расположена на расстоянии 1м от левого края. На левую сторону действует F=60Н. Какая сила на правой стороне?<br><br>
+              <strong>Решение:</strong><br>
+              d₁ = 1м (левое плечо)<br>
+              d₂ = 2м (правое плечо)<br>
+              F₁ * d₁ = F₂ * d₂<br>
+              60 * 1 = F * 2<br>
+              F = <strong>30 Н</strong> ✓
+            </div>
+            
+            <div class="example-box">
+              <strong>✅ Задача 3 (равновесие трех сил):</strong><br>
+              Тело висит на трех тросах под углами 90°, 120° и 150° к горизонтали. T₃ = 100 Н. Найти T₁ и T₂.<br><br>
+              <strong>Решение через проекции (ΣF = 0):</strong><br>
+              Нужно разложить все силы и приравнять суммы проекций к нулю.<br>
+              Обычно решается графически или методом проекций.
+            </div>
+          `
+      }
+    ],
+    conservation: [
+      {
+        title: '1️⃣ Импульс',
+        content: `
+            <h3 class="text-2xl font-bold text-purple-800 mb-4">Импульс и его сохранение</h3>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-4 mb-3">📌 Импульс тела (p):</h4>
+            <div class="formula-box">
+              <strong>p = m * v [кг·м/с]</strong><br>
+              Векторная величина, направлена так же как скорость
+            </div>
+            <p class="text-sm text-gray-700 mt-2">Импульс - мера количества движения, чем больше m и v, тем больше импульс</p>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-6 mb-3">💥 Импульс силы:</h4>
+            <div class="formula-box">
+              Δp = F * Δt [Н·с]<br>
+              Изменение импульса = произведение силы на время действия
+            </div>
+            <p class="text-sm text-gray-700 mt-2">Именно поэтому лучше ловить мяч медленно (больше Δt), чем резко!</p>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-6 mb-3">🎯 Закон сохранения импульса:</h4>
+            <div class="definition-box">
+              В замкнутой (изолированной) системе, где не действуют внешние силы, полный импульс остается постоянным.
+            </div>
+            <div class="formula-box">
+              <strong>p_до = p_после</strong><br>
+              m₁ * v₁ + m₂ * v₂ = m₁ * v₁' + m₂ * v₂'
+            </div>
+            
+            <div class="example-box">
+              <strong>✅ Пример (пуля в блок):</strong><br>
+              Пуля m=0,01кг, v=300м/с попадает в неподвижный блок m=0,99кг. Найти скорость после попадания.<br><br>
+              <strong>Решение:</strong><br>
+              0,01 * 300 + 0,99 * 0 = (0,01 + 0,99) * v'<br>
+              3 = 1 * v'<br>
+              v' = <strong>3 м/с</strong> ✓
+            </div>
+          `
+      },
+      {
+        title: '2️⃣ Работа и энергия',
+        content: `
+            <h3 class="text-2xl font-bold text-purple-800 mb-4">Работа, мощность, энергия</h3>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-4 mb-3">📋 Работа (A):</h4>
+            <div class="formula-box">
+              <strong>A = F * s * cos(α) [Дж]</strong><br>
+              α - угол между вектором силы и вектором перемещения
+            </div>
+            <p class="text-sm text-gray-700 mt-2">Работа = 0, если сила перпендикулярна движению</p>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-6 mb-3">⚙️ Мощность (P):</h4>
+            <div class="formula-box">
+              <strong>P = A/t [Вт]</strong><br>
+              1 Вт = 1 Дж/с
+            </div>
+            <p class="text-sm text-gray-700 mt-2">Мощность показывает скорость совершения работы</p>
+            
+            <div class="example-box">
+              <strong>✅ Пример мощности:</strong><br>
+              Кран поднял груз m=500кг на высоту h=10м за время t=5 сек. Найти мощность.<br><br>
+              A = m * g * h = 500 * 10 * 10 = 50 000 Дж = 50 кДж<br>
+              P = A/t = 50 000/5 = <strong>10 000 Вт = 10 кВт</strong> ✓
+            </div>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-6 mb-3">⚡ Кинетическая энергия:</h4>
+            <div class="formula-box">
+              <strong>E_к = m * v² / 2 [Дж]</strong><br>
+              Энергия движения тела
+            </div>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-6 mb-3">🏔️ Потенциальная энергия:</h4>
+            <div class="formula-box">
+              <strong>E_п = m * g * h [Дж]</strong><br>
+              Энергия положения тела относительно Земли
+            </div>
+            <p class="text-sm text-gray-700 mt-2">Выбор нулевого уровня произвольный (обычно поверхность Земли)</p>
+          `
+      },
+      {
+        title: '3️⃣ Сохранение энергии',
+        content: `
+            <h3 class="text-2xl font-bold text-purple-800 mb-4">Закон сохранения энергии</h3>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-4 mb-3">🎯 Полная механическая энергия:</h4>
+            <div class="formula-box">
+              <strong>E = E_к + E_п = const</strong><br>
+              При отсутствии трения
+            </div>
+            
+            <div class="definition-box">
+              <strong>Закон сохранения механической энергии:</strong><br>
+              При движении в консервативном поле (без трения, сопротивления) полная механическая энергия остается постоянной.
+            </div>
+            
+            <div class="example-box">
+              <strong>✅ Пример свободного падения:</strong><br>
+              Мяч падает с высоты h=20м. Какая скорость перед землей? (трения нет)<br><br>
+              <strong>Решение через энергию:</strong><br>
+              E_п(начальная) = E_к(конечная)<br>
+              m * g * h = m * v² / 2<br>
+              v = √(2 * g * h) = √(2 * 10 * 20) = √400 = <strong>20 м/с</strong> ✓
+            </div>
+            
+            <h4 class="text-lg font-bold text-purple-700 mt-6 mb-3">📊 Трансформация энергии при падении:</h4>
+            <div class="bg-purple-50 p-4 rounded-lg space-y-2">
+              <p><strong>На максимальной высоте:</strong></p>
+              <p class="text-sm">• E_к = 0 (неподвижен)</p>
+              <p class="text-sm">• E_п = m * g * h (максимум)</p>
+              <p class="text-sm">• E = m * g * h</p>
+              
+              <p class="mt-3"><strong>На половине пути:</strong></p>
+              <p class="text-sm">• E_к = E_п (равны)</p>
+              <p class="text-sm">• E = E_к + E_п = m * g * h</p>
+              
+              <p class="mt-3"><strong>На земле:</strong></p>
+              <p class="text-sm">• E_к = m * g * h (максимум)</p>
+              <p class="text-sm">• E_п = 0</p>
+              <p class="text-sm">• E = m * g * h</p>
+            </div>
+            
+            <div class="warning-box mt-6">
+              <strong>⚠️ Важно:</strong> При наличии трения полная механическая энергия НЕ сохраняется. Часть энергии переходит в тепло.
+            </div>
+          `
+      }
+    ]
+  };
+
+  let currentSection = 'kinematics';
+  let currentLesson = 0;
+
+  // Quiz Data
+  const quizzes = {
+    kinematics: [
+      { q: 'Что такое перемещение?', o: ['Длина пути', 'Вектор от начала к концу', 'Расстояние'], a: 1 },
+      { q: 'Формула средней скорости:', o: ['v = s / t', 'v = v₀ + a * t', 'v = a / t'], a: 0 },
+      { q: 'Единица ускорения:', o: ['м/с', 'км/ч', 'м/с²'], a: 2 },
+      { q: 'При РУД ускорение:', o: ['0', 'const', 'меняется'], a: 1 },
+      { q: 'При РРД путь за t:', o: ['v / t', 'v * t', 'v + t'], a: 1 },
+      { q: 'v² = v₀² + 2 * a * s - это формула:', o: ['РРД', 'РУД', 'обеих'], a: 1 },
+      { q: '72 км/ч = ? м/с:', o: ['72', '20', '7,2'], a: 1 },
+      { q: 'При РРД график v-t это:', o: ['горизонтальная прямая', 'наклонная', 'парабола'], a: 0 },
+      { q: 'Перемещение при РУД:', o: ['v * t', 'v₀ * t + a * t² / 2', 'a * t² / 2'], a: 1 },
+      { q: 'РРД это движение с:', o: ['a = 0', 'v = const', 'оба верны'], a: 2 }
+    ],
+    dynamics: [
+      { q: 'Формула F = m * a это:', o: ['1-й закон', '2-й закон', '3-й закон'], a: 1 },
+      { q: 'Единица силы:', o: ['кг', 'м/с', 'Ньютон (Н)'], a: 2 },
+      { q: '3-й закон Ньютона гласит:', o: ['F = 0', 'F₁ = -F₂', 'F > F\''], a: 1 },
+      { q: 'Формула силы тяжести:', o: ['F = m * a', 'F = m * g', 'F = m * v'], a: 1 },
+      { q: 'Закон Гука для пружины:', o: ['F = μ * N', 'F = -k * x', 'F = m * a'], a: 1 },
+      { q: 'На наклоне угол α, нормальная сила N =', o: ['m * g', 'm * g * sinα', 'm * g * cosα'], a: 2 },
+      { q: 'Значение g ≈', o: ['5 м/с²', '10 м/с²', '20 м/с²'], a: 1 },
+      { q: 'Сила трения зависит от:', o: ['v', 'S', 'N и μ'], a: 2 },
+      { q: 'Если ΣF=0, то:', o: ['v=0', 'a=0', 'a=const'], a: 1 },
+      { q: 'Нормальная реакция опоры направлена:', o: ['вниз', 'вверх', 'горизонтально'], a: 1 }
+    ],
+    statics: [
+      { q: 'ΣF=0 это условие:', o: ['движения', 'равновесия', 'ускорения'], a: 1 },
+      { q: 'M = F * d это формула:', o: ['работы', 'момента силы', 'энергии'], a: 1 },
+      { q: 'Правило рычага:', o: ['F₁ = F₂', 'F₁ * d₁ = F₂ * d₂', 'd₁ = d₂'], a: 1 },
+      { q: 'Центр тяжести кольца находится:', o: ['на краю', 'в центре', 'снизу'], a: 1 },
+      { q: 'Устойчивое равновесие - ЦТ:', o: ['выше опоры', 'ниже опоры', 'везде'], a: 1 },
+      { q: 'Второе условие равновесия:', o: ['ΣF=0', 'ΣM=0', 'ΣF²=0'], a: 1 },
+      { q: 'Плечо силы это:', o: ['вес тела', 'расстояние от оси', 'время'], a: 1 },
+      { q: 'На рычаге 3м с опорой 1м слева d₁=', o: ['1м', '2м', '3м'], a: 0 }
+    ],
+    conservation: [
+      { q: 'p = m * v это:', o: ['энергия', 'импульс', 'сила'], a: 1 },
+      { q: 'При упругом столкновении сохраняется:', o: ['только p', 'только E', 'p и E'], a: 2 },
+      { q: 'A = F * s это формула:', o: ['мощности', 'работы', 'импульса'], a: 1 },
+      { q: 'E_к = m * v² / 2 это:', o: ['потенциальная энергия', 'кинетическая энергия', 'полная энергия'], a: 1 },
+      { q: 'Закон сохранения E:', o: ['E₁ = E₂', 'E₁ + E₂ = const', 'E₁ > E₂'], a: 1 },
+      { q: 'P = A/t это формула:', o: ['силы', 'мощности', 'работы'], a: 1 },
+      { q: 'Единица энергии:', o: ['Ньютон', 'Джоуль', 'Ватт'], a: 1 },
+      { q: 'При падении кинетическая энергия:', o: ['растет', 'падает', 'const'], a: 0 },
+      { q: 'При столкновении в замкнутой системе импульс:', o: ['растет', 'падает', 'сохраняется'], a: 2 },
+      { q: 'Отдача при выстреле - это следствие:', o: ['3-го закона', '2-го закона', 'закона импульса'], a: 2 }
+    ]
+  };
+
+  // Navigation Functions
+  function toggleMenu() {
+    document.getElementById('nav-mobile').classList.toggle('hidden');
+  }
+
+  function goToPage(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(`page-${page}`).classList.add('active');
+    document.getElementById('nav-mobile').classList.add('hidden');
+    window.scrollTo(0, 0);
+  }
+
+  function selectSection(sec) {
+    currentSection = sec;
+    currentLesson = 0;
+    displayLesson();
+    document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+
+  function displayLesson() {
+    const lesson = sections[currentSection][currentLesson];
+    document.getElementById('section-content').innerHTML = lesson.content;
+    document.getElementById('prev-btn').disabled = currentLesson === 0;
+    document.getElementById('next-btn').disabled = currentLesson === sections[currentSection].length - 1;
+
+    const titles = ['🚗 Кинематика', '💪 Динамика', '⚖️ Статика', '⚡ Сохранение'];
+    const idx = Object.keys(sections).indexOf(currentSection);
+  }
+
+  function nextLesson() {
+    if (currentLesson < sections[currentSection].length - 1) {
+      currentLesson++;
+      displayLesson();
+      window.scrollTo(0, 0);
+    }
+  }
+
+  function prevLesson() {
+    if (currentLesson > 0) {
+      currentLesson--;
+      displayLesson();
+      window.scrollTo(0, 0);
+    }
+  }
+
+  // Auth
+  function showLoginModal() {
+    document.getElementById('login-modal').classList.add('active');
+  }
+
+  function hideLoginModal() {
+    document.getElementById('login-modal').classList.remove('active');
+  }
+
+  function handleLogin(e) {
+    e.preventDefault();
+    showToast('🎉 Добро пожаловать!');
+    setTimeout(() => {
+      hideLoginModal();
+      goToPage('teacher');
+      document.getElementById('login-form').reset();
+    }, 1000);
+  }
+
+  function logoutTeacher() {
+    goToPage('home');
+    showToast('👋 До встречи!');
+  }
+
+  // Teacher tabs
+  function switchTeacherTab(tab) {
+    document.querySelectorAll('.teacher-content').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.teacher-tab').forEach(el => {
+      el.classList.remove('active', 'bg-gradient-to-r', 'from-purple-600', 'to-violet-600', 'text-white');
+    });
+    document.getElementById(`tab-${tab}`).classList.remove('hidden');
+    event.target.classList.add('active', 'bg-gradient-to-r', 'from-purple-600', 'to-violet-600', 'text-white');
+  }
+
+  // Download
+  function downloadKTP() {
+    showToast('📥 КТП готов к скачиванию!');
+  }
+
+  function downloadFile(file) {
+    showToast(`📄 Файл ${file} готов!`);
+  }
+
+  // Quiz
+  function startQuiz(section) {
+    const quiz = quizzes[section];
+    let html = '<div class="space-y-4">';
+    quiz.forEach((item, idx) => {
+      html += `<div class="border-2 border-gray-300 rounded-lg p-4 bg-white hover:shadow-md transition"><p class="font-bold mb-3 text-base">${idx+1}. ${item.q}</p><div class="space-y-2">`;
+      item.o.forEach((opt, oi) => {
+        html += `<label class="test-option"><input type="radio" name="q${idx}" onchange="checkAnswer(${idx},${oi},${item.a})" style="accent-color:#7c3aed" class="cursor-pointer"><span class="ml-2 text-sm">${opt}</span></label>`;
+      });
+      html += '</div></div>';
+    });
+    html += `<button onclick="closeQuiz()" class="w-full py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-bold text-base">✓ Завершить тест</button></div>`;
+    document.getElementById('quiz-content').innerHTML = html;
+    document.getElementById('quiz-modal').classList.add('active');
+  }
+
+  function checkAnswer(qIdx, optIdx, correct) {
+    const radio = document.querySelector(`input[name="q${qIdx}"]:checked`);
+    if (!radio) return;
+    const label = radio.parentElement;
+    label.classList.remove('correct', 'wrong');
+    label.classList.add(optIdx === correct ? 'correct' : 'wrong');
+    if (optIdx === correct) {
+      showToast('✅ Верно!');
+      stats.tasks++;
+      stats.tests++;
+      updateStats();
+    } else {
+      showToast('❌ Неверно!');
+    }
+  }
+
+  function closeQuiz() {
+    document.getElementById('quiz-modal').classList.remove('active');
+  }
+
+  // Interactive Tasks
+  function calculateSpeed() {
+    const dist = parseFloat(document.getElementById('dist-input').value);
+    const time = parseFloat(document.getElementById('time-input').value);
+    if (dist && time) {
+      const v = (dist / time).toFixed(1);
+      document.getElementById('speed-result').innerHTML = `<strong>✓ Результат: ${v} км/ч</strong>`;
+      stats.tasks++;
+      updateStats();
+      showToast('🎯 Расчет выполнен!');
+    }
+  }
+
+  function calculateAcceleration() {
+    const v0 = parseFloat(document.getElementById('v0-input').value);
+    const v = parseFloat(document.getElementById('v-input').value);
+    const t = parseFloat(document.getElementById('t-input').value);
+    if (v !== undefined && v0 !== undefined && t) {
+      const a = ((v - v0) / t).toFixed(2);
+      document.getElementById('accel-result').innerHTML = `<strong>✓ Результат: ${a} м/с²</strong>`;
+      stats.tasks++;
+      updateStats();
+      showToast('🎯 Расчет выполнен!');
+    }
+  }
+
+  function calculateForce() {
+    const m = parseFloat(document.getElementById('m-input').value);
+    const a = parseFloat(document.getElementById('a-input').value);
+    if (m && a) {
+      const F = (m * a).toFixed(1);
+      document.getElementById('force-result').innerHTML = `<strong>✓ Результат: ${F} Н</strong>`;
+      stats.tasks++;
+      updateStats();
+      showToast('🎯 Расчет выполнен!');
+    }
+  }
+
+  function calculateEnergy() {
+    const m = parseFloat(document.getElementById('em-input').value);
+    const v = parseFloat(document.getElementById('ev-input').value);
+    if (m && v) {
+      const E = (m * v * v / 2).toFixed(1);
+      document.getElementById('energy-result').innerHTML = `<strong>✓ Результат: ${E} Дж</strong>`;
+      stats.tasks++;
+      updateStats();
+      showToast('🎯 Расчет выполнен!');
+    }
+  }
+
+  function calculateFallVelocity() {
+    const h = parseFloat(document.getElementById('h-input').value);
+    if (h) {
+      const v = Math.sqrt(2 * 10 * h).toFixed(1);
+      document.getElementById('fall-result').innerHTML = `<strong>✓ Результат: ${v} м/с</strong>`;
+      stats.tasks++;
+      updateStats();
+      showToast('🎯 Расчет выполнен!');
+    }
+  }
+
+  function calculateMoment() {
+    const F = parseFloat(document.getElementById('f-input').value);
+    const d = parseFloat(document.getElementById('d-input').value);
+    if (F && d) {
+      const M = (F * d).toFixed(1);
+      document.getElementById('moment-result').innerHTML = `<strong>✓ Результат: ${M} Н·м</strong>`;
+      stats.tasks++;
+      updateStats();
+      showToast('🎯 Расчет выполнен!');
+    }
+  }
+
+  function showToast(text) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-text').textContent = text;
+    toast.classList.remove('hidden');
+    setTimeout(() => toast.classList.add('hidden'), 2500);
+  }
+
+  // Init
+  displayLesson();
+  updateStats();
+</script>
+</body>
+</html>
